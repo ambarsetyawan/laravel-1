@@ -65,8 +65,8 @@
 						<hr>
 						<div class="form-group">
 							<div class="col-md-6 col-md-offset-4 login-socical">
-								<a href="{{ url('/user/facebook/login') }}"><img src="{{ URL::to('/') }}/public/images/facebook.png" width="35" height="35"></a>
-								<a href="{{ url('/user/logingg') }}"><img src="{{ URL::to('/') }}/public/images/google.png" width="35" height="35"></a>
+								<a href="{{ url('/user/facebookredirect') }}"><img src="{{ URL::to('/') }}/public/images/facebook.png" width="35" height="35"></a>
+								<a href="{{ url('/user/googleredirect') }}"><img src="{{ URL::to('/') }}/public/images/google.png" width="35" height="35"></a>
 								<a href="{{ url('/user/logintt') }}"><img src="{{ URL::to('/') }}/public/images/twitter.png" width="35" height="35"></a>
 							</div>
 						</div>

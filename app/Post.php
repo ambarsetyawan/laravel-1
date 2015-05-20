@@ -55,7 +55,7 @@ class Post extends Model {
         if(is_numeric($category_id) && Category::find($category_id))
         	$posts->where('posts.category_id', '=', $category_id);
         if($user_id)
-        	$posts->where('posts.user_id', '=', Auth::user()->id);
+        	$posts->where('posts.user_id', '=', $user_id);
         $posts->where('posts.delete_status' , '=', 0);
         $posts = $posts->get();
         foreach ($posts as $key => $value) {
@@ -77,8 +77,6 @@ class Post extends Model {
         	$url_image = "";
 			if(filter_var($value->image, FILTER_VALIDATE_URL) === false)
 				$posts[$key]->image = URL::to('/') . "/public/images/avatar/" . $value->image;
-			else
-				$posts[$key]->image = $value->image;
         	$posts[$key]->comment = \DB::table('comments')
         						->join('users', 'comments.user_id', '=', 'users.id')
 					            ->select(

@@ -48,12 +48,12 @@
 								<input type="password" class="form-control" name="password_confirmation">
 							</div>
 						</div>
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<div class="col-md-6 col-md-offset-4">
 								<input type="checkbox" class="" name="is_owner">
 								<label class="control-label">Is Owner (Register new account for Owner)</label>
 							</div>
-						</div>
+						</div> -->
 
 						<div class="form-group">
 							<div class="col-md-6 col-md-offset-4">

@@ -6311,3 +6311,48 @@ label,
 .social_activity{
   color: #337ab7;
 }
+.avatar-user-profile{
+  width: 150px;
+  height: 150px;
+  border: 1px solid white;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
+}
+.user-info{
+  padding: 0px;
+  margin-top: 10px;
+}
+.user-info li{
+  list-style-type: none;
+  padding: 5px;
+}
+.box_econ{
+  width: 20px;
+  height: 20px;
+    position: absolute;
+    z-index: 666;
+    font-size: 30px;
+    margin-left: -25px;
+    padding-top: 2px;
+}
+.tips-some-emotion{
+  display: none;
+  position: absolute;
+  z-index: 1010;
+  width: 150px !important;
+  padding: 1px;
+  margin-left: 170px;
+  /*margin-top: -10px;*/
+  background-color: #ffffff;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}

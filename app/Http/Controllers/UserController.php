@@ -17,6 +17,7 @@ use Mail;
 use URL;
 use App\Post;
 use App\Category;
+use Validator;
 
 class UserController extends Controller {
 
@@ -27,12 +28,8 @@ class UserController extends Controller {
 	 */
 	public function __construct ()
 	{
-		$this->middleware('auth', [
-				'only' => 'getProfile']);
-		$this->middleware('admin', [
-				'only' => [
-						'getCreate',
-						'postCreate']]);
+		$this->middleware('auth', ['only' => 'getProfile']);
+		$this->middleware('admin', ['only' => ['getCreate', 'postCreate']]);
 	}
 
 	/**
@@ -237,7 +234,7 @@ class UserController extends Controller {
 	 * @since 2015/05/12
 	 * @return Response
 	 */
-	public function getProfile ($category_id = 0)
+	public function getProfile ($category_id = null)
 	{
 		$category_id = trim($category_id);
 		$url_image = "";
@@ -246,7 +243,7 @@ class UserController extends Controller {
 		else
 			$url_image = Auth::user()->image;
 		Session::put('url_image_auth', $url_image);
-		$posts = Post::get_all_posts($category_id, true);
+		$posts = Post::get_all_posts($category_id, Auth::user()->id);
 		$data['posts'] = $posts;
 		$data['categories'] = Category::all();
 		return view('user/profile', $data);
@@ -266,6 +263,29 @@ class UserController extends Controller {
 		return view('user/forgot');
 	}
 
+	public function getView($user_id = null, $category_id = null){
+		$category_id = trim($category_id);
+		$data = ['user_id' => $user_id];
+		$rules = ['user_id' => 'required|exists:users,id'];
+		$validator = Validator::make($data, $rules);
+		if ($validator->fails()) {
+			Session::flash('view_user_error','User is not found!');
+		} else {
+			if($user_id == Auth::user()->id)
+				return redirect('user/profile');
+			$check_user_exist = User::whereDelete_status(0)->whereId($user_id)->first();
+			if ($check_user_exist) {
+				$data['posts'] = Post::get_all_posts($category_id, $user_id);
+				$data['categories'] = Category::all();
+				if(filter_var($check_user_exist->image, FILTER_VALIDATE_URL) === false)
+					$check_user_exist->image = URL::to('/') . "/public/images/avatar/" . $check_user_exist->image;
+				$data['user_info'] = $check_user_exist;
+			} else
+				Session::flash('view_user_error','User is not found!');
+		}
+		return view('user/view', $data);
+	}
+
 	public function getCreate ()
 	{
 		echo "create user";
@@ -274,5 +294,42 @@ class UserController extends Controller {
 	public function postCreate ()
 	{
 		echo "ok";
+	}
+
+	/**
+	 * Function setting account of user
+	 * @method GET
+	 * @author Tran Van Moi
+	 * @since  2015/05/20
+	 * @return response
+	 */
+	public function getSetting(){
+		return view('user/setting');
+	}
+
+	/**
+	 * Function setting account of user
+	 * @method POST
+	 * @author Tran Van Moi
+	 * @since  2015/05/20
+	 * @return response
+	 */
+	public function postSetting(){
+		$data = Input::all();
+		$validator = User::validate($data, 'edit');
+		if($validator->fails()){
+			return redirect('user/setting')->withInput()->withErrors($validator);
+		}
+		else {
+			if(Hash::check($data['current_password'], Auth::user()->password)){
+				echo "ok";die;
+			}
+			else{
+				return redirect('user/setting')->withInput()->with('setting_status', 
+						[
+								'status' => 'danger',
+								'message' => 'Password is not correct']);
+			}
+		}
 	}
 }

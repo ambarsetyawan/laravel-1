@@ -54,6 +54,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	    		'password_confirmation' => 'required|min:6'
     		);
 	    }
+	    if ($factory == 'edit'){
+	    	$rules = array(
+	    		'name' => 'required|min:6',
+	    		'current_password' => 'required|min:6',
+	    		'address' => 'required|min:6'
+    		);
+    		if($data['password'] != "" || $data['password_confirmation'] != ""){
+    			$rules['password'] = 'required|min:6|confirmed';
+    			$rules['password_confirmation'] = 'required|min:6';
+    		}
+	    }
 	    return Validator::make($data, $rules);
 	}
 

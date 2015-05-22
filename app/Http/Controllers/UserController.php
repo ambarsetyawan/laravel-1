@@ -18,7 +18,8 @@ use URL;
 use App\Post;
 use App\Category;
 use Validator;
-
+use App\Library\LibraryPublic;
+use File;
 class UserController extends Controller {
 
 	/**
@@ -322,7 +323,30 @@ class UserController extends Controller {
 		}
 		else {
 			if(Hash::check($data['current_password'], Auth::user()->password)){
-				echo "ok";die;
+				$user = Auth::user();
+				$user->name = $data['name'];
+				$user->address = $data['address'];
+				$user->birthday = $data['birthday'];
+				if(Input::file('image')){
+					$destination_path = './public/images/avatar/'; // upload path
+				    $extension = Input::file('image')->getClientOriginalExtension(); // getting image extension
+				    $file_name = str_random(8).'.'.$extension; // renameing image
+				    if(Input::file('image')->move($destination_path, $file_name)){
+				    	if ($user->image != "default.jpg" && File::exists($destination_path.$user->image))
+						    File::delete($destination_path.$user->image);
+				    	$user->image = $file_name;
+				    }
+				}
+				if($data['password'] != "" && $data['password'] == $data['password_confirmation']){
+					$user->password = Hash::make($data['password']);
+				}
+				$user->save();
+				$url_image = LibraryPublic::get_url_image($user->image);
+				Session::put('url_image_auth', $url_image);
+			    return redirect('user/setting')->withInput()->with('setting_status', 
+						[
+								'status' => 'success',
+								'message' => 'Setting account is success!']);
 			}
 			else{
 				return redirect('user/setting')->withInput()->with('setting_status', 

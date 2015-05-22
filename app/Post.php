@@ -6,7 +6,8 @@ use URL;
 use DB;
 use Validator;
 use Auth;
-
+use File;
+use Input;
 class Post extends Model {
 
 	/**
@@ -27,7 +28,8 @@ class Post extends Model {
 		$rules = array(
 			'title' => 'required|min:10',
 			'content' => 'required|min:10',
-			'category' => 'exists:categories,id'
+			'category' => 'exists:categories,id',
+			'image' => 'image|mimes:jpeg,jpg,png|max:2000'
 	    );
 	    return Validator::make($data, $rules);
 	}
@@ -45,6 +47,7 @@ class Post extends Model {
         		'posts.id', 
         		'posts.title', 
         		'posts.content', 
+        		'posts.image as image_post', 
         		'posts.created_at', 
         		'posts.updated_at', 
         		'users.image', 
@@ -59,6 +62,11 @@ class Post extends Model {
         $posts->where('posts.delete_status' , '=', 0);
         $posts = $posts->get();
         foreach ($posts as $key => $value) {
+        	$path = "./public/images/post/";
+        	if(File::exists($path.$value->image_post) && $value->image_post != "")
+        		$posts[$key]->image_post = URL::to('/') . "/public/images/post/" . $value->image_post;
+        	else
+        		$posts[$key]->image_post = "";
         	$now = gmdate ( "Y-m-d G:i:s", time () + 7 * 3600);
 			$date1 = new DateTime($now);
 			$date = $value->updated_at > $value->created_at ? $value->updated_at : $value->created_at;
@@ -77,6 +85,8 @@ class Post extends Model {
         	$url_image = "";
 			if(filter_var($value->image, FILTER_VALIDATE_URL) === false)
 				$posts[$key]->image = URL::to('/') . "/public/images/avatar/" . $value->image;
+			$posts[$key]->like = Like::check_like(Auth::user()->id, $value->id);
+			$posts[$key]->total_like = Like::total_like($value->id);
         	$posts[$key]->comment = \DB::table('comments')
         						->join('users', 'comments.user_id', '=', 'users.id')
 					            ->select(
@@ -88,6 +98,7 @@ class Post extends Model {
 				            		'users.id as user_id',
 				            		'users.image')
 					            ->where('comments.post_id', '=', $value->id)
+					            ->where('comments.delete_status', '=', 0)
 					            ->orderBy('comments.created_at', 'asc')
 					            ->orderBy('comments.updated_at', 'asc')
 					            ->get();
@@ -110,6 +121,14 @@ class Post extends Model {
         $post->category_id = $data['category'];
         $post->title = $data['title'];
         $post->content = $data['content'];
+        if(Input::file('image')){
+			$destination_path = './public/images/post/'; // upload path
+		    $extension = Input::file('image')->getClientOriginalExtension(); // getting image extension
+		    $file_name = str_random(8).'.'.$extension; // renameing image
+		    if(Input::file('image')->move($destination_path, $file_name)){
+		    	$post->image = $file_name;
+		    }
+		}
         $post->save();
         return $post;
 	}

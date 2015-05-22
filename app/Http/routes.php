@@ -52,4 +52,5 @@ Route::group(['middleware' => 'auth'], function()
 {
 	Route::controllers(['post' => 'PostController']);
 	Route::controllers(['comment' => 'CommentController']);
+	Route::controllers(['like' => 'LikeController']);
 });

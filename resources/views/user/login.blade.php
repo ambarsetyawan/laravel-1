@@ -1,7 +1,4 @@
 @extends('app')
-@section('header')
-	
-@endsection
 @section('content')
 <div class="container-fluid">
 	<div class="row">

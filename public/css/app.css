@@ -6238,10 +6238,17 @@ label,
   color: red;
 }
 .avatar-user{
-    width: 30px;
-    height: 30px;
-    border: 1px solid white;
-    border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid white;
+  border-radius: 4px;
+}
+.avatar-setting{
+  width: 100px;
+  height: 100px;
+  margin-bottom: 5px;
+  border: 1px solid white;
+  border-radius: 4px;
 }
 #footer{
   padding: 30px;
@@ -6256,6 +6263,7 @@ label,
 }
 /*home*/
 .avatar-post{
+  margin-left: 10px;
   width: 40px;
   height: 40px;
   border: 1px solid white;
@@ -6298,6 +6306,10 @@ label,
 }
 .poster-name-time{
   font-size: 11px;
+  margin-left: -10px;
+}
+.poster-name-title{
+  margin-left: -10px;
 }
 .li-cmt-show{
   font-size: 13px;
@@ -6355,4 +6367,17 @@ label,
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.show-more{
+  color: #337ab7;
+  text-decoration: underline;
+  font-style: italic;
+}
+.show-more:hover{
+  cursor: pointer;
+}
+.content-image-post{
+  max-width: 600px;
+  max-height: 600px;
+  margin-bottom: 5px;
 }

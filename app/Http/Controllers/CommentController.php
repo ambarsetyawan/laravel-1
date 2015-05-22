@@ -6,6 +6,11 @@ use App\Http\Controllers\Controller;
 use Input;
 use Illuminate\Http\Request;
 use App\Comment;
+use App\Post;
+use Redirect;
+use Validator;
+use Auth;
+use Session;
 
 class CommentController extends Controller {
 
@@ -59,56 +64,32 @@ class CommentController extends Controller {
 	}
 
 	/**
-	 * Store a newly created resource in storage.
-	 * 
-	 * @return Response
+	 * delete comment
+	 * @author  Tran Van Moi
+	 * @since  2015/05/20    	
+	 * @return int
 	 */
-	public function store ()
+	public function deleteDelete ()
 	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 * 
-	 * @param int $id        	
-	 * @return Response
-	 */
-	public function show ($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 * 
-	 * @param int $id        	
-	 * @return Response
-	 */
-	public function edit ($id)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 * 
-	 * @param int $id        	
-	 * @return Response
-	 */
-	public function update ($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 * 
-	 * @param int $id        	
-	 * @return Response
-	 */
-	public function destroy ($id)
-	{
-		//
+		$data = Input::all();
+		$rules = [
+				'cmt_id' => 'required|exists:comments,id'];
+		$validator = Validator::make($data, $rules);
+		if ($validator->fails())
+			return 404;
+		else {
+			$check_role_cmt = Comment::whereId($data['cmt_id'])
+			                        ->whereDelete_status(0)
+			                        ->first();
+        	$check_role_post = Post::whereUser_id(Auth::user()->id)
+        							->whereId($check_role_cmt->post_id)
+        							->first();
+			if ($check_role_cmt->user_id == Auth::user()->id || $check_role_post) {
+				$check_role_cmt->delete_status = 1;
+				$check_role_cmt->save();
+				return 200;
+			} else
+				return 404;
+		}
 	}
 }

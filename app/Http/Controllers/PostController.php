@@ -11,6 +11,8 @@ use Redirect;
 use Validator;
 use Auth;
 use Session;
+use File;
+use URL;
 
 class PostController extends Controller {
 
@@ -66,28 +68,16 @@ class PostController extends Controller {
 	}
 
 	/**
-	 * Display the specified resource.
-	 * 
-	 * @param int $id        	
-	 * @return Response
-	 */
-	public function show ($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 * 
+	 * Edit post by id
+	 * @author  Tran Van Moi
+	 * @since  2015/05/19
 	 * @param int $id        	
 	 * @return Response
 	 */
 	public function getEdit ($post_id = null)
 	{
-		$data = [
-				'post_id' => $post_id];
-		$rules = [
-				'post_id' => 'required|exists:posts,id'];
+		$data = ['post_id' => $post_id];
+		$rules = ['post_id' => 'required|exists:posts,id'];
 		$validator = Validator::make($data, $rules);
 		if ($validator->fails()) {
 			Session::flash('post_status', [
@@ -97,6 +87,11 @@ class PostController extends Controller {
 			$check_role = Post::whereUser_id(Auth::user()->id)->whereId($data['post_id'])->first();
 			$check_delete_post = Post::whereDelete_status(0)->whereId($data['post_id'])->first();
 			if ($check_role && $check_delete_post) {
+				$path = "./public/images/post/";
+	        	if(File::exists($path.$check_delete_post->image) && $check_delete_post->image != "")
+	        		$check_delete_post->image = URL::to('/') . "/public/images/post/" . $check_delete_post->image;
+	        	else
+	        		$check_delete_post->image = "";
 				$data['post'] = $check_delete_post;
 			} else
 				Session::flash('post_status', 
@@ -126,6 +121,16 @@ class PostController extends Controller {
 				$check_delete_post->title = $data['title'];
 				$check_delete_post->content = $data['content'];
 				$check_delete_post->category_id = $data['category'];
+				if(Input::file('image')){
+					$destination_path = './public/images/post/'; // upload path
+				    $extension = Input::file('image')->getClientOriginalExtension(); // getting image extension
+				    $file_name = str_random(8).'.'.$extension; // renameing image
+				    if(Input::file('image')->move($destination_path, $file_name)){
+				    	if ($check_delete_post->image != "" && File::exists($destination_path.$check_delete_post->image))
+						    File::delete($destination_path.$check_delete_post->image);
+				    	$check_delete_post->image = $file_name;
+				    }
+				}
 				$check_delete_post->save();
 				Session::flash('post_status', [
 						'status' => 'success',
@@ -137,20 +142,9 @@ class PostController extends Controller {
 	}
 
 	/**
-	 * Update the specified resource in storage.
-	 * 
-	 * @param int $id        	
-	 * @return Response
-	 */
-	public function update ($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 * 
-	 * @param int $id        	
+	 * delete post
+	 * @author  Tran Van Moi
+	 * @since  2015/05/19    	
 	 * @return Response
 	 */
 	public function deleteDelete ()
@@ -162,11 +156,13 @@ class PostController extends Controller {
 		if ($validator->fails())
 			return 404;
 		else {
-			$check_role = Post::whereUser_id(Auth::user()->id)->whereId($data['post_id'])->first();
-			$check_delete_post = Post::whereDelete_status(0)->whereId($data['post_id'])->first();
-			if ($check_role && $check_delete_post) {
-				$check_delete_post->delete_status = 1;
-				$check_delete_post->save();
+			$check_role = Post::whereUser_id(Auth::user()->id)
+			                    ->whereId($data['post_id'])
+			                    ->whereDelete_status(0)
+			                    ->first();
+			if ($check_role) {
+				$check_role->delete_status = 1;
+				$check_role->save();
 				return 200;
 			} else
 				return 404;

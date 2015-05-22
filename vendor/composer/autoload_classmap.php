@@ -12,6 +12,7 @@ return array(
     'CreateCategoriesTable' => $baseDir . '/database/migrations/2015_05_18_071506_create_categories_table.php',
     'CreateCommentsTable' => $baseDir . '/database/migrations/2015_05_18_033409_create_comments_table.php',
     'CreateGroupsTable' => $baseDir . '/database/migrations/2015_05_14_144042_create_groups_table.php',
+    'CreateLikesTable' => $baseDir . '/database/migrations/2015_05_21_113952_create_likes_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreatePostsTable' => $baseDir . '/database/migrations/2015_05_14_144100_create_posts_table.php',
     'CreateTestsTable' => $baseDir . '/database/migrations/2015_05_12_044855_create_tests_table.php',

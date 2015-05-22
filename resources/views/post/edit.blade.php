@@ -13,7 +13,7 @@
 						</div>
 					@endif
 					@if(isset($post))
-						<form class="form-horizontal" role="form" method="POST" action="{{ url('/post/edit/') }}/{{$post->id}}">
+						<form class="form-horizontal" enctype="multipart/form-data" role="form" method="POST" action="{{ url('/post/edit/') }}/{{$post->id}}">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 							<div class="form-group">
@@ -33,6 +33,15 @@
 							</div>
 
 							<div class="form-group">
+								<label class="col-md-4 control-label">Image </label>
+								<div class="col-md-6">
+									<img src="{{$post->image}}" class="" id="show_image_post">
+									<input type="file" name="image" accept="image/jpeg,image/jpg,image/png" id="image_post"/>
+									<p class="errors">{{$errors->first('image')}}</p>
+								</div>
+							</div>
+
+							<div class="form-group">
 								<label class="col-md-4 control-label" for="sel1">Select category (<span class="require"> * </span>)</label>
 						  		<div class="col-md-6">
 							  		<select class="form-control" id="sel1" name="category">
@@ -40,7 +49,7 @@
 							  				@if($category->id == $post->category_id)
 							    				<option value="{{$category->id}}" selected="true">{{$category->name}}</option>
 						    				@else
-						    				 	<option value="{{$category->id}}" selected="true">{{$category->name}}</option>
+						    				 	<option value="{{$category->id}}">{{$category->name}}</option>
 					    				 	@endif
 							    		@endforeach
 							  		</select>
@@ -62,3 +71,35 @@
 	</div>
 </div>
 @endsection
+<script src="{{asset('/public/js/jquery-2.1.4.min.js')}}"></script>
+<script type="text/javascript">
+	function readURL(input) {
+	    if (input.files && input.files[0]) {
+	        var reader = new FileReader();            
+	        reader.onload = function (e) {
+	            $('#show_image_post').attr('src', e.target.result);
+	            $('#show_image_post').show();
+	        }
+	        
+	        reader.readAsDataURL(input.files[0]);
+	    }
+	}
+	$(document).ready(function(){
+		check_show_image = "{{$post->image}}";
+		if(check_show_image != ""){
+			$('#show_image_post').show();
+		}
+		else
+			 $('#show_image_post').hide();
+		$("#image_post").change(function(){
+		    readURL(this);
+		});
+	});
+</script>
+<style type="text/css">
+	#show_image_post{
+		width: 400px;
+		height: 200px;
+		margin-bottom: 5px;
+	}
+</style>

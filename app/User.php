@@ -58,11 +58,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	    	$rules = array(
 	    		'name' => 'required|min:6',
 	    		'current_password' => 'required|min:6',
-	    		'address' => 'required|min:6'
+	    		'address' => 'required|min:6',
+	    		'birthday' => 'required|date_format:Y-m-d|before:tomorrow',
+	    		'image' => 'image|mimes:jpeg,jpg,png|max:1000'
     		);
     		if($data['password'] != "" || $data['password_confirmation'] != ""){
-    			$rules['password'] = 'required|min:6|confirmed';
-    			$rules['password_confirmation'] = 'required|min:6';
+    			$rules['password'] = 'required|min:6|max:50|confirmed';
+    			$rules['password_confirmation'] = 'required|min:6|max:50';
     		}
 	    }
 	    return Validator::make($data, $rules);

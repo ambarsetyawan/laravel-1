@@ -6,7 +6,7 @@ use App\Category;
 use Session;
 use Auth;
 use URL;
-
+use App\Library\LibraryPublic;
 class HomeController extends Controller {
 	
 	/*
@@ -40,11 +40,7 @@ class HomeController extends Controller {
 		$data = [];
 		if (Auth::check()) {
 			$category_id = trim($category_id);
-			$url_image = "";
-			if (filter_var(Auth::user()->image, FILTER_VALIDATE_URL) === false)
-				$url_image = URL::to('/') . "/public/images/avatar/" . Auth::user()->image;
-			else
-				$url_image = Auth::user()->image;
+			$url_image = LibraryPublic::get_url_image(Auth::user()->image);
 			Session::put('url_image_auth', $url_image);
 			$posts = Post::get_all_posts($category_id);
 			$data['posts'] = $posts;

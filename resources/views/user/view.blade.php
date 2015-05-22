@@ -15,6 +15,7 @@
 				<img src="{{$user_info->image}}" class="avatar-user-profile">
 				<ul class="user-info">
 					<li>- Name: {{$user_info->name}}</li>
+					<li>- Birthday: {{$user_info->birthday}}</li>
 					<li>- Address: {{$user_info->address}}</li>
 					<li>- Total post: {{count($posts)}}</li>
 				</ul>

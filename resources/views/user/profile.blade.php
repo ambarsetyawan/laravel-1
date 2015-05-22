@@ -7,9 +7,10 @@
 		<div class="col-md-2">
 			<img src="{{Session::get('url_image_auth')}}" class="avatar-user-profile">
 			<ul class="user-info">
-				<li>-Name: {{Auth::user()->name}}</li>
-				<li>-Address: {{Auth::user()->address}}</li>
-				<li>-Total post: {{count($posts)}}</li>
+				<li>- Name: {{Auth::user()->name}}</li>
+				<li>- Birthday: {{Auth::user()->birthday}}</li>
+				<li>- Address: {{Auth::user()->address}}</li>
+				<li>- Total post: {{count($posts)}}</li>
 			</ul>
 		</div>
 		<div class="col-md-8">

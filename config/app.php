@@ -135,6 +135,7 @@ return [
 		'Illuminate\Translation\TranslationServiceProvider',
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
+		'Collective\Html\HtmlServiceProvider',
 
 		/*
 		 * Application Service Providers...
@@ -195,6 +196,8 @@ return [
 		'View'      => 'Illuminate\Support\Facades\View',
 		'Entrust'   => 'Zizaco\Entrust\EntrustFacade',
 		'Socialize' => 'Laravel\Socialite\Facades\Socialite',
+		'Form' => 'Collective\Html\FormFacade',
+      	'Html' => 'Collective\Html\HtmlFacade',
 	],
 
 ];

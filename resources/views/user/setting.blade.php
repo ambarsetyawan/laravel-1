@@ -1,7 +1,4 @@
 @extends('app')
-@section('header')
-	
-@endsection
 @section('content')
 <div class="container-fluid">
 	<div class="row">
@@ -15,9 +12,18 @@
 							<p>{{ $setting_status['message'] }}</p>
 						</div>
 					@endif
-					<form class="form-horizontal" role="form" method="POST" action="{{ url('/user/setting') }}">
+					<form class="form-horizontal" enctype="multipart/form-data" role="form" method="POST" action="{{ url('/user/setting') }}">
 						<input type="hidden" name="_token" value="{{ csrf_token() }}">
+						<div class="form-group">
+							<label class="col-md-4 control-label">Image</label>
+							<div class="col-md-6">
+								<img src="{{Session::get('url_image_auth')}}" class="avatar-setting" id="target">
+								<input type="file" name="image" accept="image/jpeg,image/jpg,image/png" id="avatar_setting"/>
+								<p class="errors">{{$errors->first('image')}}</p>
+							</div>
+						</div>
 
+						
 						<div class="form-group">
 							<label class="col-md-4 control-label">Name (<span class="require"> * </span>)</label>
 							<div class="col-md-6">
@@ -27,6 +33,13 @@
 						</div>
 
 						<div class="form-group">
+							<label class="col-md-4 control-label">Birthday (<span class="require"> * </span>)</label>
+							<div class="col-md-6">
+								<input type="date" class="form-control date" id="" name="birthday" value="{{ Auth::user()->birthday }}">
+								<p class="errors">{{$errors->first('birthday')}}</p>
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="col-md-4 control-label">Address (<span class="require"> * </span>)</label>
 							<div class="col-md-6">
 								<input type="text" class="form-control" name="address" value="{{ Auth::user()->address }}">
@@ -35,13 +48,12 @@
 						</div>
 
 						<div class="form-group">
-								<label class="col-md-4 control-label">Current Password (<span class="require"> * </span>)</label>
-								<div class="col-md-6">
-									<input type="password" class="form-control" name="current_password">
-									<p class="errors">{{$errors->first('current_password')}}</p>
-								</div>
+							<label class="col-md-4 control-label">Current Password (<span class="require"> * </span>)</label>
+							<div class="col-md-6">
+								<input type="password" class="form-control" name="current_password">
+								<p class="errors">{{$errors->first('current_password')}}</p>
 							</div>
-
+						</div>
 						<div class="form-group">
 							<label class="col-md-6 control-label" href="#" id="show_change_pass">Change password</label>
 						</div>
@@ -79,6 +91,16 @@
 @endsection
 <script src="{{asset('/public/js/jquery-2.1.4.min.js')}}"></script>
 <script type="text/javascript">
+	function readURL(input) {
+	    if (input.files && input.files[0]) {
+	        var reader = new FileReader();            
+	        reader.onload = function (e) {
+	            $('#target').attr('src', e.target.result);
+	        }
+	        
+	        reader.readAsDataURL(input.files[0]);
+	    }
+	}
 	$(document).ready(function(){
 		check = "{{old('password').old('password_confirmation')}}";
 		if(check != "")
@@ -91,11 +113,15 @@
 			else
 				$("#change_pass").hide();
 		});
+		$("#avatar_setting").change(function(){
+		    readURL(this);
+		});
 	});
 </script>
 <style type="text/css">
 	#show_change_pass{
 		color: #337ab7;
-		font-style: inherit;
+		font-style: italic;
+		text-decoration: underline;
 	}
 </style>

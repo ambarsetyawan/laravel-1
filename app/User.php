@@ -79,13 +79,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 * @return object
 	 */
 	public static function create_user($user_info, $role_name){
-		$password = empty($user_info['password']) ? str_random(8) : $user_info['password'];
 		$user = new User;
         $user->name = $user_info['name'];
         $user->uid = empty($user_info['id']) ? 'res_local' : $user_info['id'];
         $user->email = $user_info['email'];
         $user->image = $user_info['image'];
-        $user->password = Hash::make($password);
+        $user->password = Hash::make($user_info['password']);
         $user->save();
         // attack role to user
         $role = Role::whereName($role_name)->first();

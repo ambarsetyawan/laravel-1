@@ -40,7 +40,7 @@ class Post extends Model {
 	 * @since  2015/05/12
 	 * @return array
 	 */
-	public static function get_all_posts($category_id, $user_id = false){
+	public static function get_all_posts($category_id, $keyword = "", $user_id = false){
 		$posts = DB::table('posts');
         $posts->join('users', 'posts.user_id', '=', 'users.id');
         $posts->select(
@@ -60,6 +60,14 @@ class Post extends Model {
         if($user_id)
         	$posts->where('posts.user_id', '=', $user_id);
         $posts->where('posts.delete_status' , '=', 0);
+        if($keyword != ""){
+        	$posts->where( function ( $posts ) use ($keyword)
+		    {
+		        $posts->where('posts.title' , 'like', '%'.$keyword.'%')
+	        	->orWhere('posts.content' , 'like', '%'.$keyword.'%')
+	        	->orWhere('users.name' , 'like', '%'.$keyword.'%');
+		    });        	
+        }
         $posts = $posts->get();
         foreach ($posts as $key => $value) {
         	$path = "./public/images/post/";

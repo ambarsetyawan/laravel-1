@@ -6,7 +6,7 @@
 			<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 			<div class="list-group col-md-2">
 			  	<a href="#" class="list-group-item active">
-			    	Catagory
+			    	Category
 			  	</a>
 			  	@foreach($categories as $category)
 			  		<a href="{{url('/home/')}}/{{$category->id}}" class="list-group-item">{{$category->name}}</a>

@@ -16,6 +16,7 @@ use Input;
 use Mail;
 use URL;
 use App\Post;
+use App\Like;
 use App\Category;
 use Validator;
 use App\Library\LibraryPublic;
@@ -125,12 +126,18 @@ class UserController extends Controller {
 			// Create account, login and send new account to user
 			if (! $user) {
 				$user_fb['image'] = $user_fb->avatar;
+				$password = str_random(8);
+				$user_fb['password'] = $password;
 				$user = User::create_user($user_fb, env('USER'));
+				$data = array('email' => $user->email, 'password' => $password);
+				LibraryPublic::send_mail_res($data);
 			}
 			// Create session
 			Auth::login($user);
-			$user->image = $user_fb->avatar;
-			$user->save();
+			if (filter_var($user->image, FILTER_VALIDATE_URL) === true){
+				$user->image = $user_fb->avatar;
+				$user->save();
+			}
 			return redirect('/');
 		} catch (Exception $e) {
 			return redirect('user/login')->withInput()->with('error', 'Login with facebook failed! Please try again!');
@@ -151,17 +158,22 @@ class UserController extends Controller {
 			$user = User::whereEmail($user_gg->email)->first();
 			// Create account, login and send new account to user
 			if (! $user) {
+				$password = str_random(8);
 				$user_data = [
 						'id' => $user_gg->id,
 						'name' => $user_gg->name,
 						'email' => $user_gg->email,
+						'password' => $password,
 						'image' => $user_gg->avatar];
 				$user = User::create_user($user_data, env('USER'));
+				LibraryPublic::send_mail_res($user_data);
 			}
 			// Create session
 			Auth::login($user);
-			$user->image = $user_gg->avatar;
-			$user->save();
+			if (filter_var($user->image, FILTER_VALIDATE_URL) === true){
+				$user->image = $user_gg->avatar;
+				$user->save();
+			}
 			return redirect('/');
 		} catch (Exception $e) {
 			return redirect('user/login')->withInput()->with('error', 'Login with google failed! Please try again!');
@@ -202,6 +214,7 @@ class UserController extends Controller {
 					'image' => 'default.jpg');
 			$role_name = Input::get('is_owner') === 'on' ? env('OWNER') : env('USER');
 			$user = User::create_user($userdata, $role_name);
+			LibraryPublic::send_mail_res($userdata);
 			if (count($user)) {
 				return redirect('user/register')->withInput()->with('register_status', 
 						[
@@ -244,27 +257,44 @@ class UserController extends Controller {
 		else
 			$url_image = Auth::user()->image;
 		Session::put('url_image_auth', $url_image);
-		$posts = Post::get_all_posts($category_id, Auth::user()->id);
+		$keyword = trim(Input::get('keyword'));
+		$data['keyword'] = $keyword;
+		$rules = ['keyword' => 'max:150|min:1'];
+		$validator = Validator::make($data, $rules);
+		if ($validator->fails()){
+			$data['keyword'] = "";
+			$posts = Post::get_all_posts($category_id, "", Auth::user()->id);
+		}
+		else
+			$posts = Post::get_all_posts($category_id, $keyword, Auth::user()->id);
+		$data['categories'] = Category::all();
 		$data['posts'] = $posts;
+		$data['total_like'] = Like::total_like_user(Auth::user()->id);
 		$data['categories'] = Category::all();
 		return view('user/profile', $data);
 	}
 
+	/**
+	 * Logout function
+	 * 
+	 * @author Tran Van Moi <[moitran92@gmail.com]>
+	 * @since 2015/05/12
+	 * @return Response
+	 */
 	public function getForgot ()
 	{
-		$hashKey = env('APP_KEY');
-		if (\Request::isMethod('post')) {
-			$data['token'] = hash_hmac('sha256', str_random(40), $hashKey);
-			Mail::send('emails.password', $data, 
-					function  ($message)
-					{
-						$message->to('moitran92@gmail.com', 'John Smith')->subject('Welcome!');
-					});
-		}
 		return view('user/forgot');
 	}
 
+	/**
+	 * View profile of other user function
+	 * 
+	 * @author Tran Van Moi <[moitran92@gmail.com]>
+	 * @since 2015/05/12
+	 * @return Response
+	 */
 	public function getView($user_id = null, $category_id = null){
+		$keyword = trim(Input::get('keyword'));
 		$category_id = trim($category_id);
 		$data = ['user_id' => $user_id];
 		$rules = ['user_id' => 'required|exists:users,id'];
@@ -276,11 +306,20 @@ class UserController extends Controller {
 				return redirect('user/profile');
 			$check_user_exist = User::whereDelete_status(0)->whereId($user_id)->first();
 			if ($check_user_exist) {
-				$data['posts'] = Post::get_all_posts($category_id, $user_id);
+				$data['keyword'] = $keyword;
+				$rules = ['keyword' => 'max:150|min:1'];
+				$validator = Validator::make($data, $rules);
+				if ($validator->fails()){
+					$data['keyword'] = "";
+					$data['posts'] = Post::get_all_posts($category_id, "", $user_id);
+				}
+				else
+					$data['posts'] = Post::get_all_posts($category_id, $keyword, $user_id);
 				$data['categories'] = Category::all();
 				if(filter_var($check_user_exist->image, FILTER_VALIDATE_URL) === false)
 					$check_user_exist->image = URL::to('/') . "/public/images/avatar/" . $check_user_exist->image;
 				$data['user_info'] = $check_user_exist;
+				$data['total_like'] = Like::total_like_user($user_id);
 			} else
 				Session::flash('view_user_error','User is not found!');
 		}

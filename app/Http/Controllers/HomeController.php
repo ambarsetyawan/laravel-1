@@ -7,6 +7,8 @@ use Session;
 use Auth;
 use URL;
 use App\Library\LibraryPublic;
+use Input;
+use Validator;
 class HomeController extends Controller {
 	
 	/*
@@ -37,12 +39,20 @@ class HomeController extends Controller {
 	 */
 	public function index ($category_id = 0)
 	{
-		$data = [];
+		$keyword = trim(Input::get('keyword'));
+		$data['keyword'] = $keyword;
 		if (Auth::check()) {
 			$category_id = trim($category_id);
 			$url_image = LibraryPublic::get_url_image(Auth::user()->image);
 			Session::put('url_image_auth', $url_image);
-			$posts = Post::get_all_posts($category_id);
+			$rules = ['keyword' => 'max:150|min:1'];
+			$validator = Validator::make($data, $rules);
+			if ($validator->fails()){
+				$data['keyword'] = "";
+				$posts = Post::get_all_posts($category_id);
+			}
+			else
+				$posts = Post::get_all_posts($category_id, $keyword);
 			$data['posts'] = $posts;
 			$data['categories'] = Category::all();
 		}

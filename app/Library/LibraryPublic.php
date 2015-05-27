@@ -1,6 +1,7 @@
 <?php 
 namespace App\Library;
 use URL;
+use Mail;
 class LibraryPublic {
 
 	public static function get_url_image($url){
@@ -12,4 +13,10 @@ class LibraryPublic {
 		return $url_image;
 	}
 
+	public static function send_mail_res($data){
+		$hashKey = env('APP_KEY');
+		Mail::send('emails.register', $data, function  ($message) use($data) {
+			$message->to($data['email'], 'Intergroup')->subject('Welcome to inter-group!!!');
+		});
+	}
 }

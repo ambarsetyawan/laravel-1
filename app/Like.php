@@ -64,4 +64,20 @@ class Like extends Model {
 		else return false;
 
 	}
+
+	/**
+	 * Total like of user
+	 * @author  Tran Van Moi
+	 * @since  2015/05/21
+	 * @param  int $user_id
+	 * @return  int
+	 */
+	public static function total_like_user($user_id){
+		$posts = Post::whereUser_id($user_id)->get();
+		$arr_post = [];
+		foreach($posts as $post){
+			$arr_post[] = $post['id'];
+		}
+		return Like::whereIn('post_id', $arr_post)->count();
+	}
 }

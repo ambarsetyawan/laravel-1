@@ -82,7 +82,7 @@ $( document ).ready(function() {
         if(content != ""){
 			var dataString = 'content='+content+'&post_id='+id;
 			$.ajax({
-				 headers: {
+				headers: {
 			        'X-XSRF-TOKEN': $('input[name="_token"]').val()
 			    },	
 				type: "POST",

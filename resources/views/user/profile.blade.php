@@ -10,7 +10,8 @@
 				<li>- Name: {{Auth::user()->name}}</li>
 				<li>- Birthday: {{Auth::user()->birthday}}</li>
 				<li>- Address: {{Auth::user()->address}}</li>
-				<li>- Total post: {{count($posts)}}</li>
+				<li>- Total posts: {{count($posts)}}</li>
+				<li>- Total likes: {{$total_like}}</li>
 			</ul>
 		</div>
 		<div class="col-md-8">
@@ -18,7 +19,7 @@
 		</div>
 		<div class="list-group col-md-2">
 		  	<a href="#" class="list-group-item active">
-		    	Catagory
+		    	Category
 		  	</a>
 		  	@foreach($categories as $category)
 		  		<a href="{{url('/user/profile/')}}/{{$category->id}}" class="list-group-item">{{$category->name}}</a>

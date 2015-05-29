@@ -1,0 +1,1 @@
+echo "Home page admin"

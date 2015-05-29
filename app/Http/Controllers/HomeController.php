@@ -41,7 +41,7 @@ class HomeController extends Controller {
 	{
 		$keyword = trim(Input::get('keyword'));
 		$data['keyword'] = $keyword;
-		if (Auth::check()) {
+		if (Auth::check() && Auth::user()->hasRole('user')) {
 			$category_id = trim($category_id);
 			$url_image = LibraryPublic::get_url_image(Auth::user()->image);
 			Session::put('url_image_auth', $url_image);
@@ -55,6 +55,9 @@ class HomeController extends Controller {
 				$posts = Post::get_all_posts($category_id, $keyword);
 			$data['posts'] = $posts;
 			$data['categories'] = Category::all();
+		}
+		if (Auth::check() && Auth::user()->hasRole('admin')) {
+			return redirect('admin');
 		}
 		return view('home', $data);
 	}

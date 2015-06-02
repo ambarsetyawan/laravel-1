@@ -50,13 +50,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	    	$rules = array(
 	    		'email' => 'required|email|unique:users',
 	    		'password' => 'required|min:6|confirmed',
-	    		'name' => 'required|min:6',
-	    		'password_confirmation' => 'required|min:6'
+	    		'name' => 'required|min:5',
+	    		'password_confirmation' => 'required|min:6',
+	    		'address' => 'required|min:6',
+	    		'birthday' => 'required|date_format:Y-m-d|before:tomorrow',
     		);
 	    }
 	    if ($factory == 'edit'){
 	    	$rules = array(
-	    		'name' => 'required|min:6',
+	    		'name' => 'required|min:5',
 	    		'current_password' => 'required|min:6',
 	    		'address' => 'required|min:6',
 	    		'birthday' => 'required|date_format:Y-m-d|before:tomorrow',
@@ -66,6 +68,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     			$rules['password'] = 'required|min:6|max:50|confirmed';
     			$rules['password_confirmation'] = 'required|min:6|max:50';
     		}
+	    }
+	    if($factory == 'admin-edit'){
+	    	$rules = array(
+	    		'email' => 'required|email|unique:users,email,' .$data['id'],
+	    		'name' => 'required|min:5',
+	    		'address' => 'min:6',
+	    		'password' => 'min:6|confirmed',
+	    		'password_confirmation' => 'min:6',
+	    		'birthday' => 'date_format:Y-m-d|before:tomorrow',
+	    		'image' => 'image|mimes:jpeg,jpg,png|max:1000'
+    		);
 	    }
 	    return Validator::make($data, $rules);
 	}
@@ -85,6 +98,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user->email = $user_info['email'];
         $user->image = $user_info['image'];
         $user->password = Hash::make($user_info['password']);
+        if(isset($user_info['birthday']))
+        	$user->birthday = $user_info['birthday'];
+        if(isset($user_info['address']))
+        	$user->address = $user_info['address'];
         $user->save();
         // attack role to user
         $role = Role::whereName($role_name)->first();

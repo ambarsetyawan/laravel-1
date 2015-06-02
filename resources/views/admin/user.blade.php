@@ -16,6 +16,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <div class="panel-heading">
                     All posts
                 </div>
@@ -25,7 +26,7 @@
                        <table class="table table-striped table-bordered table-hover" id="datatable_example">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th class="center"><input type="checkbox" id="check_all"></th>
                                     <th>Stt</th>
                                     <th>Username</th>
                                     <th>Email</th>
@@ -39,8 +40,8 @@
                                 <?php $i = 0; ?>
                                 @foreach($users as $user)
                                 <?php $i++; ?>
-                                <tr>
-                                    <td><input type="checkbox" ></td>
+                                <tr id="tr_{{$user->id}}">
+                                    <td class="center"><input type="checkbox" id="delete_{{$user->id}}"></td>
                                     <td>{{$i}}</td>
                                     <td>{{$user->name}}</td>
                                     <td>{{$user->email}}</td>
@@ -65,7 +66,7 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <button class="btn btn-primary">Delete selected</button>
+            <button class="btn btn-primary" id="deleteAll">Delete selected</button>
         </div>
     </div>
     <style type="text/css">
@@ -85,6 +86,9 @@
         $(document).ready(function() {
             $('#datatable_example').DataTable({
                     responsive: true,
+                    bInfo : false,
+                    // aLengthMenu: [[5, 20, 40, -1], [5, 20, 40, "All"]],
+                    // iDisplayLength: 5,
                     // default ordering
                     order: [[ 1, "asc" ]],
                     // select ordering and search
@@ -94,6 +98,45 @@
                         // select column to disable. add (-) from right to left
                         aTargets: [ -1, 0]
                     }]
+            });
+            $("#check_all").click(function(){
+                $('input:checkbox').not(this).prop('checked', this.checked);
+            });
+            $('#deleteAll').click(function(){
+                var ids = [];
+                $("[id^=delete_]").each(function() {
+                    if ($(this).is(":checked")) {
+                        id = $(this).attr("id");
+                        id = id.substr(id.indexOf("_") + 1);
+                        ids.push(id);
+                    }
+                });
+                if(ids){
+                    $.ajax({
+                        headers: {
+                            'X-XSRF-TOKEN': $('input[name="_token"]').val()
+                        },
+                        type: "DELETE",
+                        url : "/admin/user/delete",
+                        data : {ids: ids, _token: $('input[name="_token"]').val()},
+                        dataType : "JSON",
+                        success : function(data){
+                            if(data == 200){
+                                for(i = 0; i < ids.length; i++){
+                                    $('#tr_'+ids[i]).hide();
+                                }
+                                alert('Delete Sucess!');
+                            }
+                            else {
+                                console.log(data);
+                                alert("Error! Please try again!");
+                            }
+                        },
+                        error: function(data) {
+                            alert("Error! Please try again!");
+                        },
+                    });
+                }
             });
         });
     </script>

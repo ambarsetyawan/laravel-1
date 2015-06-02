@@ -34,7 +34,7 @@ class HomeController extends Controller {
 	 */
 	public function getUsers()
 	{
-		$data['users'] = User::all();
+		$data['users'] = User::whereDelete_status(0)->where('id', '<>', Auth::user()->id)->get();
 		return view('admin/user', $data);
 	}
 

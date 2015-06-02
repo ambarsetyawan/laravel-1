@@ -2,80 +2,74 @@
 @section('content')
      <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Create User</h1>
+            <h2 class="page-header">Edit User</h2>
         </div>
     </div>
+    @if (Session::has('not_found_user'))
+        <div class="alert alert-danger">
+            <p>{{ Session::get('not_found_user') }}</p>
+        </div>
+    @else
     <div class="row">
         <div class="col-lg-12">
                 <div class="panel-body">
-                    @if (Session::has('setting_status'))
-                        <?php $setting_status = Session::get('setting_status')?>
-                        <div class="alert alert-{{$setting_status['status']}}">
-                            <p>{{ $setting_status['message'] }}</p>
+                    @if (Session::has('edit_status'))
+                        <?php $edit_status = Session::get('edit_status')?>
+                        <div class="alert alert-{{$edit_status['status']}}">
+                            <p>{{ $edit_status['message'] }}</p>
                         </div>
                     @endif
-                    <form class="form-horizontal" enctype="multipart/form-data" role="form" method="POST" action="{{ url('/user/setting') }}">
+                    <form class="form-horizontal" enctype="multipart/form-data" role="form" method="POST" action="{{ url('admin/user/edit/') }}/{{$user->id}}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="form-group">
-                            <label class="col-md-4 control-label">Image</label>
+                            <label class="col-md-3 control-label">Image</label>
                             <div class="col-md-6">
-                                <img src="{{Session::get('url_image_auth')}}" class="avatar-setting" id="target">
+                                <img src="{{Session::get('url_image_edit_user')}}" class="avatar-setting" id="target">
                                 <input type="file" name="image" accept="image/jpeg,image/jpg,image/png" id="avatar_setting"/>
                                 <p class="errors">{{$errors->first('image')}}</p>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label class="col-md-4 control-label">Name (<span class="require"> * </span>)</label>
+                            <label class="col-md-3 control-label">Name (<span class="require"> * </span>)</label>
                             <div class="col-md-6">
-                                <input type="text" class="form-control" name="name" value="{{ Auth::user()->name }}">
+                                <input type="text" class="form-control" name="name" placeholder="Username" value="{{$user->name}}">
                                 <p class="errors">{{$errors->first('name')}}</p>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label class="col-md-4 control-label">Birthday (<span class="require"> * </span>)</label>
+                            <label class="col-md-3 control-label">Email (<span class="require"> * </span>)</label>
                             <div class="col-md-6">
-                                <input type="date" class="form-control date" id="" name="birthday" value="{{ Auth::user()->birthday }}">
+                                <input type="email" class="form-control" name="email" placeholder="Email-address" value="{{ $user->email }}">
+                                <p class="errors">{{$errors->first('email')}}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Birthday</label>
+                            <div class="col-md-6">
+                                <input type="date" class="form-control date" id="" name="birthday" placeholder="Birthday" value="{{ $user->birthday }}">
                                 <p class="errors">{{$errors->first('birthday')}}</p>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-4 control-label">Address (<span class="require"> * </span>)</label>
+                            <label class="col-md-3 control-label">Address</label>
                             <div class="col-md-6">
-                                <input type="text" class="form-control" name="address" value="{{ Auth::user()->address }}">
+                                <input type="text" class="form-control" name="address" placeholder="Address" value="{{ $user->address }}">
                                 <p class="errors">{{$errors->first('address')}}</p>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label class="col-md-4 control-label">Current Password (<span class="require"> * </span>)</label>
+                            <label class="col-md-3 control-label">New Password</label>
                             <div class="col-md-6">
-                                <input type="password" class="form-control" name="current_password">
-                                <p class="errors">{{$errors->first('current_password')}}</p>
+                                <input type="password" class="form-control" name="password">
+                                <p class="errors">{{$errors->first('password')}}</p>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-6 control-label" href="#" id="show_change_pass">Change password</label>
-                        </div>
-
-                        <div id="change_pass">
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">New Password (<span class="require"> * </span>)</label>
-                                <div class="col-md-6">
-                                    <input type="password" class="form-control" name="password">
-                                    <p class="errors">{{$errors->first('password')}}</p>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Confirm New Password (<span class="require"> * </span>)</label>
-                                <div class="col-md-6">
-                                    <input type="password" class="form-control" name="password_confirmation">
-                                </div>
+                            <label class="col-md-3 control-label">Confirm New Password</label>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control" name="password_confirmation">
                             </div>
                         </div>
-
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
@@ -88,4 +82,28 @@
             </div>
         </div>
     </div>
+    @endif
+@endsection
+@section('script')
+    <script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#target').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $(document).ready(function(){
+            $('#avatar_setting').hide();
+            $('#target').click(function(){
+                $('#avatar_setting').click();
+            });
+            $("#avatar_setting").change(function(){
+                readURL(this);
+            });
+        });
+    </script>
 @endsection

@@ -25,7 +25,7 @@ class UserController extends Controller {
 
 	/**
 	 * Create a new controller instance.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function __construct ()
@@ -36,7 +36,7 @@ class UserController extends Controller {
 
 	/**
 	 * get Login function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -54,7 +54,7 @@ class UserController extends Controller {
 
 	/**
 	 * post Login function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/15
 	 * @return Response
@@ -89,7 +89,7 @@ class UserController extends Controller {
 
 	/**
 	 * Facebook redirect function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/13
 	 * @return redirect to login
@@ -101,7 +101,7 @@ class UserController extends Controller {
 
 	/**
 	 * Google redirect function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/13
 	 * @return redirect to login
@@ -113,7 +113,7 @@ class UserController extends Controller {
 
 	/**
 	 * Login with facebook function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -146,7 +146,7 @@ class UserController extends Controller {
 
 	/**
 	 * Login with google function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -182,7 +182,7 @@ class UserController extends Controller {
 
 	/**
 	 * Register function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -194,7 +194,7 @@ class UserController extends Controller {
 
 	/**
 	 * post Register function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -216,12 +216,12 @@ class UserController extends Controller {
 			$user = User::create_user($userdata, $role_name);
 			LibraryPublic::send_mail_res($userdata);
 			if (count($user)) {
-				return redirect('user/register')->withInput()->with('register_status', 
+				return redirect('user/register')->withInput()->with('register_status',
 						[
 								'status' => 'success',
 								'message' => 'Register user is success, You can login now!']);
 			} else
-				return redirect('user/register')->withInput()->with('register_status', 
+				return redirect('user/register')->withInput()->with('register_status',
 						[
 								'status' => 'danger',
 								'message' => 'Register user is failed, Please try again!']);
@@ -230,7 +230,7 @@ class UserController extends Controller {
 
 	/**
 	 * Logout function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -243,7 +243,7 @@ class UserController extends Controller {
 
 	/**
 	 * Profile function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -276,7 +276,7 @@ class UserController extends Controller {
 
 	/**
 	 * Logout function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -288,7 +288,7 @@ class UserController extends Controller {
 
 	/**
 	 * View profile of other user function
-	 * 
+	 *
 	 * @author Tran Van Moi <[moitran92@gmail.com]>
 	 * @since 2015/05/12
 	 * @return Response
@@ -324,16 +324,6 @@ class UserController extends Controller {
 				Session::flash('view_user_error','User is not found!');
 		}
 		return view('user/view', $data);
-	}
-
-	public function getCreate ()
-	{
-		echo "create user";
-	}
-
-	public function postCreate ()
-	{
-		echo "ok";
 	}
 
 	/**
@@ -382,13 +372,13 @@ class UserController extends Controller {
 				$user->save();
 				$url_image = LibraryPublic::get_url_image($user->image);
 				Session::put('url_image_auth', $url_image);
-			    return redirect('user/setting')->withInput()->with('setting_status', 
+			    return redirect('user/setting')->withInput()->with('setting_status',
 						[
 								'status' => 'success',
 								'message' => 'Setting account is success!']);
 			}
 			else{
-				return redirect('user/setting')->withInput()->with('setting_status', 
+				return redirect('user/setting')->withInput()->with('setting_status',
 						[
 								'status' => 'danger',
 								'message' => 'Password is not correct']);

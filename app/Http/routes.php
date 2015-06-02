@@ -16,7 +16,9 @@ Route::group(['middleware' => 'auth'], function()
 });
 // Admin
 Route::group(['middleware' => 'admin'], function(){
-    Route::controllers(['admin' => 'Admin\AdminController']);
-    // Route::controllers(['admin\user' => 'Admin\UserController']);
-    // Route::controllers(['admin\post' => 'Admin\PostController']);
+
+    Route::controllers(['admin/user' => 'Admin\UserController']);
+    Route::controllers(['admin/post' => 'Admin\PostController']);
+    Route::controllers(['admin/category' => 'Admin\CategoryController']);
+    Route::controllers(['admin' => 'Admin\HomeController']);
 });

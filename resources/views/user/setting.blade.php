@@ -23,7 +23,7 @@
                             </div>
                         </div>
 
-                        
+
                         <div class="form-group">
                             <label class="col-md-4 control-label">Name (<span class="require"> * </span>)</label>
                             <div class="col-md-6">
@@ -93,11 +93,11 @@
 <script type="text/javascript">
     function readURL(input) {
         if (input.files && input.files[0]) {
-            var reader = new FileReader();            
+            var reader = new FileReader();
             reader.onload = function (e) {
                 $('#target').attr('src', e.target.result);
             }
-            
+
             reader.readAsDataURL(input.files[0]);
         }
     }

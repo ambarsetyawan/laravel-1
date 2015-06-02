@@ -41,7 +41,7 @@
                 @endif
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                    <!-- <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         <i class="fa fa-bell-o"></i>
                         <span class="label label-warning">3</span></a>
                         <ul class="dropdown-menu" role="menu">
@@ -54,14 +54,14 @@
                             <li><a href="{{ url('/user/setting') }}">Seven Moi like your post</a></li>
                             <li><a href="{{ url('/user/setting') }}">Seven Moi like your post</a></li>
                         </ul>
-                    </li>
+                    </li> -->
                     @if (Auth::guest())
                         <li><a href="{{ url('/user/login') }}">Login</a></li>
                         <li><a href="{{ url('/user/register') }}">Register</a></li>
                     @else
                         <li><a href="{{url('/user/profile')}}">
                             <img src="{{Session::get('url_image_auth')}}" class="avatar-user">
-                            {{ Auth::user()->name }} 
+                            {{ Auth::user()->name }}
                             </a>
                         </li>
                         <li class="dropdown">

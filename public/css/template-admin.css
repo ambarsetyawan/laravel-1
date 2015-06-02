@@ -1,0 +1,16 @@
+#footer{
+  padding: 30px;
+  border-top:1px solid #e7e7e7;
+}
+#page-wrapper{
+    padding-bottom: 20px;
+}
+#datatable_example{
+    padding-top: 5px
+}
+.create_new{
+    margin-bottom: 10px;
+}
+.errors, .require{
+  color: red;
+}

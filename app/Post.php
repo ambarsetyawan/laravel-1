@@ -44,14 +44,14 @@ class Post extends Model {
 		$posts = DB::table('posts');
         $posts->join('users', 'posts.user_id', '=', 'users.id');
         $posts->select(
-        		'posts.id', 
-        		'posts.title', 
-        		'posts.content', 
-        		'posts.image as image_post', 
-        		'posts.created_at', 
-        		'posts.updated_at', 
-        		'users.image', 
-        		'users.name as username', 
+        		'posts.id',
+        		'posts.title',
+        		'posts.content',
+        		'posts.image as image_post',
+        		'posts.created_at',
+        		'posts.updated_at',
+        		'users.image',
+        		'users.name as username',
         		'users.id as user_id');
         $posts->orderBy('created_at', 'desc');
         $posts->orderBy('updated_at', 'desc');
@@ -66,7 +66,7 @@ class Post extends Model {
 		        $posts->where('posts.title' , 'like', '%'.$keyword.'%')
 	        	->orWhere('posts.content' , 'like', '%'.$keyword.'%')
 	        	->orWhere('users.name' , 'like', '%'.$keyword.'%');
-		    });        	
+		    });
         }
         $posts = $posts->get();
         foreach ($posts as $key => $value) {
@@ -98,9 +98,9 @@ class Post extends Model {
         	$posts[$key]->comment = \DB::table('comments')
         						->join('users', 'comments.user_id', '=', 'users.id')
 					            ->select(
-				            		'comments.id', 
-				            		'comments.content', 
-				            		'comments.created_at', 
+				            		'comments.id',
+				            		'comments.content',
+				            		'comments.created_at',
 				            		'comments.updated_at',
 				            		'users.name as username',
 				            		'users.id as user_id',
@@ -129,14 +129,15 @@ class Post extends Model {
         $post->category_id = $data['category'];
         $post->title = $data['title'];
         $post->content = $data['content'];
-        if(Input::file('image')){
-			$destination_path = './public/images/post/'; // upload path
-		    $extension = Input::file('image')->getClientOriginalExtension(); // getting image extension
-		    $file_name = str_random(8).'.'.$extension; // renameing image
-		    if(Input::file('image')->move($destination_path, $file_name)){
-		    	$post->image = $file_name;
-		    }
-		}
+        if(!isset($data['remove_image']))
+            if(Input::file('image')){
+    			$destination_path = './public/images/post/'; // upload path
+    		    $extension = Input::file('image')->getClientOriginalExtension(); // getting image extension
+    		    $file_name = str_random(8).'.'.$extension; // renameing image
+    		    if(Input::file('image')->move($destination_path, $file_name)){
+    		    	$post->image = $file_name;
+    		    }
+    		}
         $post->save();
         return $post;
 	}

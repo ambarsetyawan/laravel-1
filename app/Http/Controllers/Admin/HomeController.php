@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use Auth;
+use App\Post;
 
 class HomeController extends Controller {
 	/**
@@ -24,7 +25,7 @@ class HomeController extends Controller {
 	 */
 	public function getIndex()
 	{
-		return view('admin/home');
+		return redirect('admin/users');
 	}
 	/**
 	 * Function manager users
@@ -34,7 +35,12 @@ class HomeController extends Controller {
 	 */
 	public function getUsers()
 	{
-		$data['users'] = User::whereDelete_status(0)->where('id', '<>', Auth::user()->id)->get();
+		$data['users'] = User::whereDelete_status(0)
+						->where('id', '<>', Auth::user()
+						->id)
+						->orderBy('updated_at', 'desc')
+						->orderBy('created_at', 'desc')
+						->get();
 		return view('admin/user', $data);
 	}
 
@@ -46,7 +52,20 @@ class HomeController extends Controller {
 	 */
 	public function getPosts()
 	{
-		return view('admin/post');
+		$data['posts'] = Post::whereDelete_status(0)
+							->join('categories', 'posts.category_id', '=', 'categories.id')
+							->select('posts.id',
+									'posts.title',
+									'posts.content',
+									'posts.image',
+									'posts.created_at',
+									'posts.updated_at',
+									'categories.name as category_name'
+								)
+							->orderBy('posts.created_at', 'desc')
+							->orderBy('posts.updated_at', 'desc')
+							->get();
+		return view('admin/post', $data);
 	}
 
 	/**

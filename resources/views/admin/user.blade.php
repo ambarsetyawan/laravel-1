@@ -18,7 +18,7 @@
             <div class="panel panel-default">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <div class="panel-heading">
-                    All posts
+                    All users
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
